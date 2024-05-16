@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import type { Guitar, CartItem } from '../types'
 
 export const useCart = () => {
@@ -28,10 +28,6 @@ export const useCart = () => {
             const newItem : CartItem = {...item, quantity : 1}
             setCart([...cart, newItem])
         }
-    }
-
-    function removeFromCart(id : Guitar['id']) {
-        setCart(prevCart => prevCart.filter(guitar => guitar.id !== id))
     }
 
     function decreaseQuantity(id : Guitar['id']) {
@@ -64,18 +60,11 @@ export const useCart = () => {
         setCart([])
     }
 
-    // State Derivado
-    const isEmpty = useMemo( () => cart.length === 0, [cart])
-    const cartTotal = useMemo( () => cart.reduce( (total, item ) => total + (item.quantity * item.price), 0), [cart] )
-
     return {
         cart,
         addToCart,
-        removeFromCart,
         decreaseQuantity,
         increaseQuantity,
-        clearCart,
-        isEmpty,
-        cartTotal
+        clearCart
     }
 }

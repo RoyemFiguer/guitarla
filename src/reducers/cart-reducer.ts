@@ -28,13 +28,21 @@ export const cartReducer = (
 
     if(action.type === "add-to-cart"){
 
-        const itemExists = state.cart.findIndex(guitar => guitar.id === action.payload.item.id)
+        const itemExists = state.cart.find(guitar => guitar.id === action.payload.item.id)
 
         let updatedCart : CartItem[] = []
-        if(itemExists >= 0 ) { // existe en el carrito
-            if(state.cart[itemExists].quantity >= MAX_ITEMS) return
-            updatedCart = [...state.cart]
-            updatedCart[itemExists].quantity++
+        if(itemExists) { // exists in cart
+          updatedCart = state.cart.map(item => {
+            if(item.id === action.payload.item.id){
+                if(item.quantity < MAX_ITEMS){
+                    return {...item, quantity: item.quantity + 1}
+                }else{
+                    return item
+                }
+            }else{
+                return item
+            }
+          })
         } else {
             const newItem : CartItem = {...action.payload.item, quantity : 1}
             updatedCart = [...state.cart, newItem]
@@ -47,8 +55,10 @@ export const cartReducer = (
     }
 
     if(action.type === "remove-from-cart"){
+        const updatedCart = state.cart.filter(item => item.id !== action.payload.id )
         return{
-            ...state
+            ...state,
+            cart: updatedCart
         }
     }
 
@@ -59,8 +69,21 @@ export const cartReducer = (
     }
 
     if(action.type === "increase-quantity"){
+       
+            const updatedCart = state.cart.map( item => {
+                if(item.id === action.payload.id && item.quantity < MAX_ITEMS) {
+                    return {
+                        ...item,
+                        quantity: item.quantity + 1
+                    }
+                }
+                return item
+            })
+        
+
         return{
-            ...state
+            ...state,
+            cart: updatedCart
         }
     }
 
